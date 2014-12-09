@@ -9,13 +9,13 @@ import com.javadocmd.rpl.terminal.Direktor;
 import com.javadocmd.rpl.util.TiledBackgroundActor;
 
 public class RplGame extends ApplicationAdapter {
-	
+
 	private Stage stage;
 	private ShaderProgram shader;
 	private Direktor direktor;
-	
+
 	private float u_time = 0f;
-	
+
 	@Override
 	public void create() {
 		float w = Gdx.app.getGraphics().getWidth();
@@ -23,7 +23,7 @@ public class RplGame extends ApplicationAdapter {
 
 		Resources.load();
 		Resources res = Resources.INSTANCE;
-		
+
 		stage = new Stage();
 
 		shader = new ShaderProgram(res.vertexShader, res.fragmentShader);
@@ -31,9 +31,9 @@ public class RplGame extends ApplicationAdapter {
 			Gdx.app.log("Shader", shader.getLog());
 			Gdx.app.exit();
 		}
-		
+
 		stage.getBatch().setShader(shader);
-		
+
 		TiledBackgroundActor bg = new TiledBackgroundActor(w, h,
 				res.screenLines);
 		stage.addActor(bg);
@@ -42,21 +42,24 @@ public class RplGame extends ApplicationAdapter {
 		direktor.begin();
 	}
 
+	// private FPSLogger fpsLogger = new FPSLogger();
+
 	@Override
 	public void render() {
+		// fpsLogger.log();
 		u_time += Gdx.graphics.getDeltaTime();
-		
+
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		shader.begin();
 		shader.setUniformf("u_time", u_time);
-		shader.setUniformf("u_staticStrength", direktor.getStaticStrength());
 		shader.setUniformf("u_flickerStrength", direktor.getFlickerStrength());
-		
+		shader.setUniformf("u_staticStrength", direktor.getStaticStrength());
+
 		stage.act();
 		stage.draw();
-		
+
 		shader.end();
 	}
 

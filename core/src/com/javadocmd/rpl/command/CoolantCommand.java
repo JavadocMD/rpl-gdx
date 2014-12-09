@@ -25,7 +25,9 @@ public class CoolantCommand implements Command {
 	public Script getScript(String command, final Direktor direktor) {
 		Matcher m = COMMAND_PATTERN.matcher(command);
 		if (m.matches()) {
-			Integer value = Integer.parseInt(m.group(1));
+			int iSpace = command.indexOf(" ");
+			String valueString = (iSpace > -1) ? command.substring(iSpace + 1, command.length()): command;
+			Integer value = Integer.parseInt(valueString);
 			if (value >= 0 && value <= 100) {
 				return setCoolant(value, direktor);
 			}

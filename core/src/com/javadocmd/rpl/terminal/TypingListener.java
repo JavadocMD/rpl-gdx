@@ -24,7 +24,9 @@ public class TypingListener extends InputAdapter {
 
 		Matcher matcher = INPUT.matcher(s);
 		if (matcher.matches()) {
-			terminal.type(matcher.group(2));
+			int iSpace = s.indexOf(" ");
+			String character = (iSpace > -1) ? s.substring(iSpace + 1, s.length()): s;
+			terminal.type(character);
 			return true;
 
 		} else {

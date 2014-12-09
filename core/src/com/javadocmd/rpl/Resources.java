@@ -35,7 +35,7 @@ public class Resources implements Disposable {
 		screenLines = atlas.findRegion("screen-lines");
 		pixel = atlas.findRegion("pixel");
 		
-		vertexShader = Gdx.files.internal("vertex.glsl");
+		vertexShader = Gdx.files.internal("basic-vertex.glsl");
 		fragmentShader = Gdx.files.internal("fragment.glsl");
 	}
 

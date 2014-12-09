@@ -12,10 +12,8 @@ varying vec4 v_color;
 varying vec2 v_texCoord0;
 
 float flicker() {
-	return 0.5 + 0.3 * sin(31 * u_time) + 0.1 * sin(3 * u_time) + 0.1 * sin(79 * u_time);
+	return 0.5 + 0.3 * sin(31.0 * u_time) + 0.1 * sin(3.0 * u_time) + 0.1 * sin(79.0 * u_time);
 }
-
-// ---- Here's a bunch of random noise code that I got from https://github.com/ashima/webgl-noise/blob/master/src/noise2D.glsl ---- //
 
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -30,7 +28,7 @@ vec3 permute(vec3 x) {
 }
 
 float snoise(vec2 v) {
-	  const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+      const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
 	                      0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
 	                     -0.577350269189626,  // -1.0 + 2.0 * C.x
 	                      0.024390243902439); // 1.0 / 41.0
@@ -80,14 +78,15 @@ float snoise(vec2 v) {
 // ---- And my code again. ---- //
 
 void main() {
-	vec4 texColor = texture2D(u_texture, v_texCoord0);
-	vec2 quantCoord = floor(gl_FragCoord / 4);
+	vec2 noiseCoord = floor(gl_FragCoord.xy / vec2(4.0)) * vec2(u_time);
+	float basicNoise = (1.0 - u_staticStrength) * snoise(noiseCoord);
 	
-	vec4 noise = u_staticStrength * vec4(snoise(quantCoord * u_time)) + (1.0 - u_staticStrength);
-	noise.a = 1;
+	vec4 myNoise = vec4(u_staticStrength) * vec4(basicNoise) + vec4(1.0 - u_staticStrength);
+	myNoise.a = 1.0;
 	
-	vec4 flicker = u_flickerStrength * vec4(flicker()) + (1.0 - u_flickerStrength);
-	flicker.a = 1;
+	vec4 myFlicker = vec4(u_flickerStrength) * vec4(flicker()) + vec4(1.0 - u_flickerStrength);
+    myFlicker.a = 1.0;
     
-    gl_FragColor = v_color * texColor * noise * flicker;
+    vec4 texColor = texture2D(u_texture, v_texCoord0);
+    gl_FragColor = v_color * texColor * myFlicker * myNoise;
 }

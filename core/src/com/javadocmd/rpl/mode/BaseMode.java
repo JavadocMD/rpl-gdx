@@ -3,6 +3,7 @@ package com.javadocmd.rpl.mode;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.javadocmd.rpl.command.BlinkCommand;
 import com.javadocmd.rpl.command.ClockCommand;
 import com.javadocmd.rpl.command.Command;
 import com.javadocmd.rpl.command.ExitCommand;
@@ -20,6 +21,7 @@ abstract public class BaseMode implements Mode {
 		commands.add(new ReturnCommand());
 		commands.add(new SnowmanCommand());
 		commands.add(new ClockCommand());
+		commands.add(new BlinkCommand());
 		return commands;
 	}
 }

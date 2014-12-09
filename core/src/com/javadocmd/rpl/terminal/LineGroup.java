@@ -1,45 +1,53 @@
 package com.javadocmd.rpl.terminal;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.javadocmd.rpl.util.IncorporealActor;
 
 abstract public class LineGroup extends IncorporealActor {
-	
+
 	public static interface Faktory {
 		public LineGroup create(Label[] labels);
 	}
-	
-	private List<WeakReference<Label>> labels;
-	
+
+	private List<Label> labels;
+	private Set<Label> neverStaged;
+
 	public LineGroup(Label[] labels) {
-		this.labels = new ArrayList<WeakReference<Label>>();
+		this.labels = new ArrayList<Label>();
+		this.neverStaged = new HashSet<Label>();
 		for (Label l : labels) {
-			this.labels.add(new WeakReference<Label>(l));
+			this.labels.add(l);
+			this.neverStaged.add(l);
 		}
 	}
-	
+
 	@Override
 	public void act(float delta) {
-		updateLifecycle(delta);		
-		for (ListIterator<WeakReference<Label>> i = labels.listIterator(); i.hasNext(); ) {
-			Label l = i.next().get();
-			if (l != null) {
+		updateLifecycle(delta);
+		for (ListIterator<Label> i = labels.listIterator(); i.hasNext();) {
+			Label l = i.next();
+			if (l.getStage() != null) {
+				neverStaged.remove(l);
 				update(l);
-			} else {
+			} else if (!neverStaged.contains(l)) {
 				i.remove();
+				// Gdx.app.log("LineGroup", "Removed line.");
 			}
 		}
-		
-		if (labels.size() == 0)
+
+		if (labels.size() == 0) {
 			remove();
+			// Gdx.app.log("LineGroup", "Removed group.");
+		}
 	}
-	
+
 	abstract protected void updateLifecycle(float delta);
-	
+
 	abstract protected void update(Label label);
 }
